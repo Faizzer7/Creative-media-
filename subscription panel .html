@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 15px 0;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .buttons button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .buttons button:hover {
+            background-color: #0056b3;
+            padding: 10px 20px;
+        }
+        .content {
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .mpesa-form, .western-union-form, .paypal-form {
+            display: none; /* Initially hidden */
+            text-align: left;
+            margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .mpesa-form label, .western-union-form label, .paypal-form label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        .mpesa-form input, .western-union-form input, .paypal-form input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .mpesa-form .non-editable, .western-union-form .non-editable, .paypal-form .non-editable {
+            background: #f4f4f4;
+            color: #333;
+        }
+        .copy-button {
+            margin-top: 5px;
+            cursor: pointer;
+            padding: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .submit-btn {
+            margin-top: 15px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #1da851;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Subscription Panel</h1>
+        <div class="buttons">
+            <button onclick="showMpesaForm()">M-Pesa</button>
+            <button onclick="showWesternUnionForm()">Western Union</button>
+            <button onclick="showPayPalForm()">PayPal</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Creative Media Academy Subscription Plan</h2>
+        <p>Join Creative Media Academy today and unlock your potential in creative design, media production, and digital arts.</p>
+        <p><strong>Subscription Fee:</strong> $25 USD</p>
+        <p>Choose your preferred payment method above and start learning today!</p>
+        
+        <!-- M-Pesa Section -->
+        <div class="mpesa-form" id="mpesaForm">
+            <h3>M-Pesa Payment</h3>
+            <label>Your Name</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+
+            <label>Your Phone Number</label>
+            <input type="text" id="phone" placeholder="Enter phone number used to pay" required>
+
+            <label>M-Pesa Reference Number</label>
+            <input type="text" id="mpesaRef" placeholder="e.g. TB83B6619" required>
+
+            <label>Pay to PayBill Number</label>
+            <input type="text" value="542542" class="non-editable" readonly>
+
+            <label>Account Number</label>
+            <input type="text" id="accountNumber" value="01206045076150" class="non-editable" readonly>
+            <button class="copy-button" onclick="copyAccountNumber()">Copy</button>
+
+            <button class="submit-btn" onclick="sendToWhatsApp()">Submit</button>
+        </div>
+
+        <!-- Western Union Section -->
+        <div class="western-union-form" id="westernUnionForm">
+            <h3>Western Union Payment Instructions</h3>
+            <p><strong>Follow these steps to send money via Western Union:</strong></p>
+            <ol>
+                <li><strong>Create an Account:</strong> Visit the <a href="https://www.westernunion.com" target="_blank">Western Union website</a> or use their app to sign up.</li>
+                <li><strong>Select Kenya as the Destination:</strong> Choose Kenya from the country options.</li>
+                <li><strong>Select Bank Transfer as the Delivery Method:</strong> Choose Bank Transfer instead of cash pickup or mobile money.</li>
+                <li><strong>Enter Recipient’s Bank Details:</strong> Use the following details:</li>
+            </ol>
+
+            <label><strong>Bank Name:</strong></label>
+            <input type="text" class="non-editable" value="I&M BANK LIMITED" readonly>
+
+            <label><strong>SWIFT Code:</strong></label>
+            <input type="text" class="non-editable" value="IMBLKENA" readonly>
+
+            <label><strong>Bank Code:</strong></label>
+            <input type="text" class="non-editable" value="057" readonly>
+
+            <label><strong>Branch Code:</strong></label>
+            <input type="text" class="non-editable" value="012" readonly>
+
+            <label><strong>Bank Address:</strong></label>
+            <input type="text" class="non-editable" value="30238 Nairobi, 00100 GPO Kenya" readonly>
+
+            <label><strong>Account Number:</strong></label>
+            <input type="text" id="accountNumberWesternUnion" class="non-editable" value="01206045076150" readonly>
+            <button class="copy-button" onclick="copyAccountNumberWesternUnion()">Copy</button>
+
+            <label><strong>Account Name:</strong></label>
+            <input type="text" class="non-editable" value="Edwin" readonly>
+
+            <ol start="5">
+                <li><strong>Enter the Amount:</strong> Specify how much you wish to send and review exchange rates and fees.</li>
+                <li><strong>Select Payment Method:</strong> Choose to fund the transfer via bank transfer.</li>
+                <li><strong>Review and Send:</strong> Confirm all details and complete the transaction.</li>
+                <li><strong>Receive Confirmation:</strong> Once the money is deposited into your bank account, you will receive a notification (email or SMS).</li>
+                <li><strong> paste you Confirmation Notification sent to you email or text messagr:</strong></li>
+                <input type="text" id="confirmationNotification" placeholder="Enter confirmation notification" required>
+            </ol>
+
+            <button class="submit-btn" onclick="sendToWhatsAppWesternUnion()">Submit</button>
+        </div>
+
+        <!-- PayPal Section -->
+        <div class="paypal-form" id="paypalForm">
+            <h3>PayPal Payment</h3>
+            <label>Your Name</label>
+            <input type="text" id="paypalName" placeholder="Enter your name" required>
+
+            <label>Your Email Address used to send to paypal</label>
+            <input type="email" id="paypalEmail" placeholder="Enter your email address" required>
+
+            <label> copy you Payment Confirmation sent to you emial or txt message</label>
+            <input type="text" id="paypalConfirmation" placeholder="Enter confirmation of payment" required>
+
+            <label>PayPal Email Address to pay to</label>
+            <input type="email" value="edwinaadega@gmail.com" class="non-editable" readonly>
+
+            <button class="submit-btn" onclick="sendToWhatsAppPayPal()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        function showMpesaForm() {
+            document.getElementById("mpesaForm").style.display = "block";
+            document.getElementById("westernUnionForm").style.display = "none";
+            document.getElementById("paypalForm").style.display = "none";
+        }
+
+        function showWesternUnionForm() {
+            document.getElementById("westernUnionForm").style.display = "block";
+            document.getElementById("mpesaForm").style.display = "none";
+            document.getElementById("paypalForm").style.display = "none";
+        }
+
+        function showPayPalForm() {
+            document.getElementById("paypalForm").style.display = "block";
+            document.getElementById("mpesaForm").style.display = "none";
+            document.getElementById("westernUnionForm").style.display = "none";
+        }
+
+        function copyAccountNumber() {
+            var copyText = document.getElementById("accountNumber");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(copyText.value);
+            alert("Account Number Copied: " + copyText.value);
+        }
+
+        function copyAccountNumberWesternUnion() {
+            var copyText = document.getElementById("accountNumberWesternUnion");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(copyText.value);
+            alert("Account Number Copied: " + copyText.value);
+        }
+
+        function sendToWhatsApp() {
+            var name = document.getElementById("name").value;
+            var phone = document.getElementById("phone").value;
+            var mpesaRef = document.getElementById("mpesaRef").value;
+            
+            if (name === "" || phone === "" || mpesaRef === "") {
+                alert("Please fill in all fields before submitting.");
+                return;
+            }
+
+            var message = `Hello, I have made a payment for the Creative Media Academy Subscription. Details:\n\n` +
+                          `Name: ${name}\n` +
+                          `Phone: ${phone}\n` +
+                          `M-Pesa Ref: ${mpesaRef}`;
+
+            var whatsappUrl = "https://wa.me/254798171788?text=" + encodeURIComponent(message);
+            window.location.href = whatsappUrl;
+        }
+
+        function sendToWhatsAppWesternUnion() {
+            var confirmationNotification = document.getElementById("confirmationNotification").value;
+
+            if (confirmationNotification === "") {
+                alert("Please enter the confirmation notification.");
+                return;
+            }
+
+            var message = `I have made a payment via Western Union for the Creative Media Academy Subscription. Details:\n\n` +
+                          `Confirmation: ${confirmationNotification}`;
+
+            var whatsappUrl = "https://wa.me/254798171788?text=" + encodeURIComponent(message);
+            window.location.href = whatsappUrl;
+        }
+
+        function sendToWhatsAppPayPal() {
+            var name = document.getElementById("paypalName").value;
+            var email = document.getElementById("paypalEmail").value;
+            var confirmation = document.getElementById("paypalConfirmation").value;
+
+            if (name === "" || email === "" || confirmation === "") {
+                alert("Please fill in all fields before submitting.");
+                return;
+            }
+
+            var message = `I have made a payment via PayPal for the Creative Media Academy Subscription. Details:\n\n` +
+                          `Name: ${name}\n` +
+                          `Email: ${email}\n` +
+                          `Confirmation: ${confirmation}`;
+
+            var whatsappUrl = "https://wa.me/254798171788?text=" + encodeURIComponent(message);
+            window.location.href = whatsappUrl;
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Portfolio - Creative Media Academy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .category-container {
+            width: 100%;
+        }
+
+        .category {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .category h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .category p {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .design-gallery {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding-bottom: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .design-item {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            text-align: center;
+            cursor: pointer;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .design-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #0b3d91;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #083a7f;
+        }
+
+        /* Fullscreen Modal */
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fullscreen-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Design Portfolio</h1>
+        <p>Browse through the designs uploaded by the admin.</p>
+    </header>
+
+    <!-- Categories Section -->
+    <section class="category-container">
+        <div class="category" id="poster-category">
+            <h3>Poster Designs</h3>
+            <p>Beautiful posters for events, promotions, and advertisements.</p>
+            <div class="design-gallery" id="poster-designs"></div>
+        </div>
+
+        <div class="category" id="logo-category">
+            <h3>Logo Designs</h3>
+            <p>Custom logos to represent your brand with professionalism.</p>
+            <div class="design-gallery" id="logo-designs"></div>
+        </div>
+
+        <div class="category" id="magazine-category">
+            <h3>Magazine Layout Designs</h3>
+            <p>Creative magazine layouts with stunning graphics and typography.</p>
+            <div class="design-gallery" id="magazine-designs"></div>
+        </div>
+
+        <div class="category" id="ebook-category">
+            <h3>Ebook Designs</h3>
+            <p>Visually appealing Ebook designs for various types of publications.</p>
+            <div class="design-gallery" id="ebook-designs"></div>
+        </div>
+
+        <div class="category" id="brochure-category">
+            <h3>Brochure Designs</h3>
+            <p>Professional brochures for businesses, events, and promotions.</p>
+            <div class="design-gallery" id="brochure-designs"></div>
+        </div>
+
+        <div class="category" id="business-card-category">
+            <h3>Business Card Designs</h3>
+            <p>Eye-catching business card designs that leave a lasting impression.</p>
+            <div class="design-gallery" id="business-card-designs"></div>
+        </div>
+    </section>
+
+    <!-- Fullscreen Modal -->
+    <div class="fullscreen-modal" id="fullscreenModal">
+        <img id="fullscreenImage" src="" alt="Full Screen Image">
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Creative Media Academy. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // User Panel - Display designs based on category from localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const categories = {
+                'poster': 'poster-designs',
+                'logo': 'logo-designs',
+                'magazine': 'magazine-designs',
+                'ebook': 'ebook-designs',
+                'brochure': 'brochure-designs',
+                'business-card': 'business-card-designs'
+            };
+
+            const designs = JSON.parse(localStorage.getItem('designs')) || [];
+
+            if (designs.length === 0) {
+                alert('No designs available at the moment.');
+                return;
+            }
+
+            // Group designs by category
+            const groupedDesigns = {
+                'poster': [],
+                'logo': [],
+                'magazine': [],
+                'ebook': [],
+                'brochure': [],
+                'business-card': []
+            };
+
+            designs.forEach(design => {
+                groupedDesigns[design.category].push(design);
+            });
+
+            // Function to display designs in the respective category section
+            function displayDesigns(category, designsList) {
+                const galleryContainer = document.getElementById(category);
+                galleryContainer.innerHTML = ''; // Clear any existing content
+
+                if (designsList.length === 0) {
+                    galleryContainer.innerHTML = '<p>No designs uploaded yet in this category.</p>';
+                    return;
+                }
+
+                // Display designs horizontally with scrolling
+                const gallery = document.createElement('div');
+                gallery.classList.add('design-gallery');
+                galleryContainer.appendChild(gallery);
+
+                designsList.slice(0, ).forEach((design) => {
+                    const designItem = document.createElement('div');
+                    designItem.classList.add('design-item');
+                    designItem.innerHTML = `
+                        <img src="${design.imageUrl}" alt="${design.description}">
+                        <p>${design.description}</p>
+                    `;
+                    gallery.appendChild(designItem);
+
+                    // Add double-tap functionality to view image in full-screen mode
+                    designItem.addEventListener('dblclick', () => {
+                        const modal = document.getElementById('fullscreenModal');
+                        const fullscreenImage = document.getElementById('fullscreenImage');
+                        fullscreenImage.src = design.imageUrl;
+                        modal.style.display = 'flex';
+                    });
+                });
+            }
+
+            // Display designs under each category
+            for (let category in groupedDesigns) {
+                displayDesigns(categories[category], groupedDesigns[category]);
+            }
+
+            // Close fullscreen modal on click
+            document.getElementById('fullscreenModal').addEventListener('click', () => {
+                document.getElementById('fullscreenModal').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

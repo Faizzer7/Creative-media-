@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Upload Designs</title>
+    
+    <style>
+        /* Basic Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #0b3d91;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1a73e8;
+        }
+
+        .design-gallery {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .design-item {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            text-align: center;
+        }
+
+        .design-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .delete-button {
+            background-color: #ff3b3b;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            border: none;
+            border-radius: 5px;
+            cursor: not-allowed; /* Change cursor to indicate it's disabled */
+        }
+
+        .delete-button:disabled {
+            background-color: #d3d3d3; /* Grey out disabled button */
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Admin Panel - Upload and Manage Designs</h1>
+    </header>
+
+    <section class="upload-section">
+        <form id="design-upload-form">
+            <div class="form-group">
+                <label for="design-category">Select Category:</label>
+                <select id="design-category" name="design-category" required>
+                    <option value="poster">Poster Design</option>
+                    <option value="logo">Logo Design</option>
+                    <option value="magazine">Magazine Layout Design</option>
+                    <option value="ebook">Ebook Design</option>
+                    <option value="brochure">Brochure Design</option>
+                    <option value="business-card">Business Card Design</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="design-description">Design Description:</label>
+                <textarea id="design-description" name="design-description" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="design-image">Choose Images to Upload (multiple allowed):</label>
+                <input type="file" id="design-image" name="design-image" accept="image/*" multiple required>
+            </div>
+
+            <button type="submit">Upload Designs</button>
+        </form>
+    </section>
+
+    <section class="design-gallery" id="design-gallery">
+        <!-- Uploaded designs will appear here -->
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('design-upload-form');
+            const gallery = document.getElementById('design-gallery');
+
+            displayDesigns();
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const designCategory = document.getElementById('design-category').value;
+                const designDescription = document.getElementById('design-description').value;
+                const designImages = document.getElementById('design-image').files;
+
+                if (designImages.length === 0) {
+                    alert('Please choose at least one image!');
+                    return;
+                }
+
+                Array.from(designImages).forEach((designImage) => {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        addWatermark(e.target.result, (watermarkedImage) => {
+                            const imageData = {
+                                category: designCategory,
+                                description: designDescription,
+                                imageUrl: watermarkedImage
+                            };
+
+                            let designs = JSON.parse(localStorage.getItem('designs')) || [];
+                            designs.push(imageData);
+
+                            localStorage.setItem('designs', JSON.stringify(designs));
+                            displayDesigns();
+                        });
+                    };
+                    reader.readAsDataURL(designImage);
+                });
+
+                form.reset();
+                alert('Designs uploaded successfully with watermark!');
+            });
+
+            function addWatermark(imageUrl, callback) {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.src = imageUrl;
+
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                    // Watermark settings
+                    const fontSize = Math.max(canvas.width * 0.05, 30);
+                    ctx.font = `${fontSize}px Arial`;
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+                    ctx.strokeStyle = "rgba(0, 0, 0, 0.7)";
+                    ctx.lineWidth = 2;
+                    ctx.textAlign = "center";
+                    ctx.color = "blue"
+
+                    // Rotate for diagonal effect
+                    ctx.save();
+                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    ctx.rotate(-Math.PI / 4); // 45-degree diagonal rotation
+
+                    // Draw watermark
+                    ctx.strokeText("This is a property of", 0, -20);
+                    ctx.strokeText("Creative Media Academy", 0, 20);
+                    ctx.fillText("This is a property of", 0, -20);
+                    ctx.fillText("Creative Media Academy", 0, 20);
+
+                    ctx.restore(); // Reset transformations
+
+                    callback(canvas.toDataURL("image/png"));
+                };
+            }
+
+            function displayDesigns() {
+                gallery.innerHTML = '';
+
+                const designs = JSON.parse(localStorage.getItem('designs')) || [];
+
+                if (designs.length === 0) {
+                    gallery.innerHTML = '<p>No designs uploaded yet.</p>';
+                    return;
+                }
+
+                designs.forEach((design, index) => {
+                    const designItem = document.createElement('div');
+                    designItem.classList.add('design-item');
+                    designItem.innerHTML = `
+                        <img src="${design.imageUrl}" alt="${design.description}">
+                        <p>${design.description}</p>
+                        <button class="delete-button" data-index="${index}" disabled>Delete</button> <!-- Disabled button -->
+                    `;
+
+                    gallery.appendChild(designItem);
+                });
+            }
+
+            function deleteDesign(index) {
+                let designs = JSON.parse(localStorage.getItem('designs')) || [];
+                designs.splice(index, 1);
+
+                localStorage.setItem('designs', JSON.stringify(designs));
+                displayDesigns();
+            }
+        });
+    </script>
+
+</body>
+</html>
